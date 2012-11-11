@@ -53,7 +53,8 @@ Keys in status window:
 * p      : to write a post with your favorite editor
 * u      : update status window
 * e      : enter edit line
-* esc    : stop editing
 
 In edit mode
 * /follow https://tent.tent.is  : follow specified entity
+* esc    : stop editing
+* <enter> post what you have written in edit line
