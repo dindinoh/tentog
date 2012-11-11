@@ -38,6 +38,9 @@ Installation
     datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
     debuglog=/home/YOURUSERNAME/tentog.log
 </pre>
+* For now also do touch /home/YOURUSERNAME/.config/tentog/data/posts/status
+
+That _should_ be all!
 
 Usage
 ======
