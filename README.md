@@ -30,14 +30,14 @@ Installation
 1. mkdir -p ~/.config/tentog/data/posts/
 2. edit ~/.config/tentog/config
 3. add something like:
-```
+<pre> 
     [tentog]
-    editor=yourfavorite editor
+    editor=yourfavoriteeditor
     entityUrl=https://YOURENTITY.tent.is
     keystore=/home/YOURUSERNAME/.config/tentog/keystore.js
     datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
     debuglog=/home/YOURUSERNAME/tentog.log
-```
+</pre>
 
 Usage
 ======
