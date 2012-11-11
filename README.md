@@ -27,7 +27,7 @@ Installation
 * Then inside tentog folder clone python-tent-client, see http://longears.github.com/python.tent-client
   (or do it anyways you might please, but if you do not do this you need to fix this in tentog.py)
 * Create a config folder, file and datastore folder.
-1. mkdir -p ~/.config/tentog/data/posts/
+```1. mkdir -p ~/.config/tentog/data/posts/
 2. edit ~/.config/tentog/config
 3. add something like:
 [tentog]
@@ -35,7 +35,7 @@ editor=yourfavorite editor
 entityUrl=https://YOURENTITY.tent.is
 keystore=/home/YOURUSERNAME/.config/tentog/keystore.js
 datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
-debuglog=/home/YOURUSERNAME/tentog.log
+debuglog=/home/YOURUSERNAME/tentog.log```
 
 Usage
 ======
