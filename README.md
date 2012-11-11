@@ -24,7 +24,7 @@ Dependencies
 Installation
 ======
 * First clone this repo
-* Then inside tentog folder clone python-tent-client, see http://longears.github.com/python-tent-client
+* Then inside tentog folder clone python-tent-client, see http://www.github.com/python-tent-client
   (or do it anyways you might please, but if you do not do this you need to fix this in tentog.py)
 * Create a config folder, file and datastore folder.
 1. mkdir -p ~/.config/tentog/data/posts/
