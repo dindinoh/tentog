@@ -27,15 +27,15 @@ Installation
 * Then inside tentog folder clone python-tent-client, see http://longears.github.com/python-tent-client
   (or do it anyways you might please, but if you do not do this you need to fix this in tentog.py)
 * Create a config folder, file and datastore folder.
-'''1. mkdir -p ~/.config/tentog/data/posts/
+1. mkdir -p ~/.config/tentog/data/posts/
 2. edit ~/.config/tentog/config
 3. add something like:
-[tentog]
-editor=yourfavorite editor
-entityUrl=https://YOURENTITY.tent.is
-keystore=/home/YOURUSERNAME/.config/tentog/keystore.js
-datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
-debuglog=/home/YOURUSERNAME/tentog.log'''
+    [tentog]
+    editor=yourfavorite editor
+    entityUrl=https://YOURENTITY.tent.is
+    keystore=/home/YOURUSERNAME/.config/tentog/keystore.js
+    datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
+    debuglog=/home/YOURUSERNAME/tentog.log'''
 
 Usage
 ======
@@ -45,5 +45,10 @@ It should fix your keys as kestore.js if you haven't set them up using longears 
 
 Keys in status window:
 * arrows : move to a specific post (nothing to be done with it for now) 
-* p : to write a post with your favorite editor
-* u : update status window
+* p      : to write a post with your favorite editor
+* u      : update status window
+* e      : enter edit line
+* esc    : stop editing
+
+In edit mode
+* /follow https://tent.tent.is  : follow specified entity
