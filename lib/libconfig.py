@@ -46,15 +46,15 @@ class config(object):
             if parser.has_option('tentog','entityUrl'):
                 self.entityUrl=parser.get('tentog', 'entityUrl')
             else:
-                missingreq('entityUrl')
+                self.missingreq('entityUrl')
             if parser.has_option('tentog','keystore'):
                 self.keystore=parser.get('tentog', 'keystore')
             else:
-                missingreq('keystore')
+                self.missingreq('keystore')
             if parser.has_option('tentog','datastore'):
                 self.datastore=parser.get('tentog', 'datastore')
             else:
-                missingreq('datastore')
+                self.missingreq('datastore')
 
             #optional options in config file
             if parser.has_option('tentog','editor'):
