@@ -42,7 +42,7 @@ class config(object):
         parser = SafeConfigParser()
         parser.read(self.configfile)
         if parser.has_section('tentog'):
-            #check required options in config file
+            # check required options in config file
             if parser.has_option('tentog','entityUrl'):
                 self.entityUrl=parser.get('tentog', 'entityUrl')
             else:
