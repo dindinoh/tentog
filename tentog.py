@@ -142,7 +142,10 @@ def newpost():
 def debug(message):
     """prints debug message to logfile"""
     conf=config.config()
-    logfile = open(conf.debuglog, 'a')
+    try:
+        logfile = open(conf.debuglog, 'a')
+    except Exception, e:
+        quit('no debuglog path specified, that is required for now.',1)
     try:
         logfile.write(str(datetime.now()) + " - " + message + "\n")
     except Exception, e:
@@ -158,7 +161,12 @@ def quit(quitmsg,exitvalue):
 def sanitycheck():
     """pre-flight sanity check"""
     """TODO: include config file tests, make optional according to option parsing"""
-    login.login()
+    #login.login()
+    try:
+        conf = config.config()
+    except Exception, e:
+        print e
+    
 
 class fetcher(threading.Thread):
     """fetches new updates in feed and stores them in datastore"""
@@ -376,7 +384,7 @@ class gtentog(object):
 
 if __name__ == '__main__':
     try:
-        #sanitycheck()
+        sanitycheck()
         fetcher().start()
         gtentog()
     except (KeyboardInterrupt, SystemExit):
