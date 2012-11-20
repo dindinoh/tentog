@@ -9,11 +9,10 @@ Nothing more than a urwid window and a fetcher in the background to get your new
 It's almost 100% usable for me right now as my only tent client.
 
 A lot of stuff is not working right now, but this is what _is_ working:
-* post both directly from main window and editor
+* posting
 * follow someone
 * read posts
-
-I am very open to pull requests!
+* read reposts
 
 Dependencies
 ======
@@ -38,7 +37,6 @@ Installation
     datastore=/home/YOURUSERNAME/.config/tentog/data/posts/
     debuglog=/home/YOURUSERNAME/tentog.log
 </pre>
-* For now also do touch /home/YOURUSERNAME/.config/tentog/data/posts/status
 
 That _should_ be all!
 
@@ -49,8 +47,6 @@ python tentog.py
 It should fix your keys as kestore.js if you haven't set them up using longears python-tent-client before. In that case copy them to the keystore specified in the config file. It will start fetching new posts in the background.
 
 Keys in status window:
-* arrows : move to a specific post (nothing to be done with it for now) 
-* p      : to write a post with your favorite editor
 * u      : update status window
 * e      : enter edit line
 
