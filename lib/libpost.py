@@ -18,7 +18,7 @@ class getrepost(object):
 
 def sendpost(message):
     """send post to server"""
-    conf=libconfig.config()
+    conf = libconfig.config()
     app = liblogin.login()
     post = {
         # add essay if > 256char
@@ -37,8 +37,7 @@ def sendpost(message):
         }
     try:
         app.putPost(post)
-        gtentog()
     except Exception, e:
-        debug("something went wrong posting: \n%s" % (message))
-        debug(e)
+        libfunc.debug("something went wrong posting: \n%s" % (message))
+        libfunc.debug(e)
 
