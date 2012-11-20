@@ -8,9 +8,12 @@ class ItemWidget (urwid.WidgetWrap):
         self.entity = '%s' % (entity)
         self.entityUrl = '%s' % (entityUrl)
         self.item = [
+            
+            
             ('fixed', 6, urwid.Padding ( urwid.AttrWrap ( urwid.Text ('%s' % time) , 'body', 'focus'), right=1)),
             ('fixed', 16,urwid.Padding ( urwid.AttrWrap ( urwid.Text ('%s' % entity) , 'entity', 'focus'), right=1)),
             (urwid.Padding(urwid.AttrWrap(urwid.Text('%s' % postdata), 'body', 'focus'),align='left')),
+
         ]
         w = urwid.Columns(self.item)
         self.__super.__init__(w)
