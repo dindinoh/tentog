@@ -137,14 +137,6 @@ class gtentog(object):
                 postid = line['id']
                 entityUrl = line['entity']
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
-            #elif line['type'] == 'https://tent.io/types/post/repost/v0.1.0':
-                #timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
-                #entity = str(line['entity']).split('//')[1].split('.')[0] + ">"
-                #orgposter = line['content']['entity']
-                #orgid = line['content']['id']
-                #msg = '-> %s\n' % (orgposter)
-                #msg = msg + getonepost(orgid)
-                #items.append(itemwidget.ItemWidget(timestamp,msg,entity))
             elif line['type'] == 'https://tent.io/types/post/following/v0.1.0':
                 timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = "Tentog>"
