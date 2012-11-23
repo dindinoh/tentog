@@ -17,6 +17,7 @@ import lib.libitemwidget as libitemwidget
 import lib.liblogin as liblogin
 import lib.libpost as libpost
 import lib.libfunc as libfunc
+import lib.libfollow as libfollow
 
 sys.path.append('./python-tent-client')
 import tentapp
@@ -100,12 +101,12 @@ class CustomEdit(urwid.Edit):
             if "/f " in self.get_edit_text() or "/follow " in self.get_edit_text():
                 whotofollow = str(self.get_edit_text()).split(' ')[1]
                 if whotofollow:
-                    follow(whotofollow)
+                    libfollow.follow(whotofollow)
                     gtentog()
             if "/u " in self.get_edit_text() or "/unfollow " in self.get_edit_text():
                 whotounfollow = str(self.get_edit_text()).split(' ')[1]
                 if whotounfollow:
-                    unfollow(whotounfollow)
+                    libfollow.unfollow(whotounfollow)
             if "/" not in str(self.get_edit_text())[0]:
                 libpost.sendpost(self.get_edit_text())
                 gtentog()
@@ -116,6 +117,24 @@ class CustomEdit(urwid.Edit):
             return
 
         urwid.Edit.keypress(self, size, key)
+
+def sysmsg(msg):
+    towrite='{"attachments": [],\
+"app": {"url": "tentog", "name": "Tentog sysmsg"},\
+"updated_at": 0,\
+"entity": "http://Tentog.",\
+"content": {"text": "%s"},\
+"received_at": 0,\
+"published_at": 0,\
+"version": 1,\
+"licenses": [],\
+"mentions": [],\
+"type": "https://tent.io/types/post/status/v0.1.0","id": "","permissions": {"entities": {}, "public": true, "groups": []}}' % msg
+    conf=libconfig.config()
+    file = open(conf.datastore+'status', 'a')
+    file.write(towrite + "\n")
+    file.close()
+    gtentog()
 
 class gtentog(object):
     """start the gui and fetch posts from datastore"""
@@ -154,41 +173,13 @@ class gtentog(object):
         self.view = urwid.Frame(urwid.AttrWrap(self.listbox, 'body'))
         self.foot = CustomEdit(' > ')
         self.view.set_footer(self.foot)        
-        # TODO use watch_file to make automatic repaint of window work?
-        #self.main_loop.event_loop.watch_file(
-        #    self.pipe_stderr_read,
-        #    self.stderr_event)
-        loop = urwid.MainLoop(self.view, palette, unhandled_input=self.keystroke)
-        urwid.connect_signal(walker, 'modified', self.update)
-        loop.run()
-
-    def sysmsg(self,sysmsg):
-        """ this function might be used for interacting with the user and if used it should be made into a new function with the above one to avoid duplication"""
-        palette = [
-            ('head','light cyan', 'black'),
-            ('body','', '', 'standout'),
-            ('entity','light cyan', '', 'standout'),
-            ('foot','', 'black'),
-            ('focus','', 'light cyan', 'standout'),
-            ]
-
-        items = []
-        timestamp="now"
-        entity="Tentog>"
-        msg=sysmsg
-        items.append(libitemwidget.ItemWidget(timestamp,msg,entity))
-        walker = urwid.SimpleListWalker(items)
-        self.listbox = urwid.ListBox(walker)
-        focus = self.listbox.set_focus(+100)
-        self.view = urwid.Frame(urwid.AttrWrap(self.listbox, 'body'))
-        self.foot = CustomEdit(' > ')
-        self.view.set_footer(self.foot)        
+        #self.watch_pipe()
         loop = urwid.MainLoop(self.view, palette, unhandled_input=self.keystroke)
         urwid.connect_signal(walker, 'modified', self.update)
         loop.run()
     
     def update(self):
-        """repaint status window (is this one used?)"""
+        """repaint status window"""
         focus = self.listbox.get_focus()[0].postid
         #self.view.set_header(urwid.AttrWrap(urwid.Text('selected: %s' % str(focus)), 'head'))
 
@@ -207,11 +198,9 @@ class gtentog(object):
             if input is 'u':
                 gtentog()
             if input is 'p':
-                newpost()    
+                sysmsg("p is pressed")    
             if input == 'e':
                 self.edit()
-            if input == 't':
-                self.sysmsg("messy")
             if input == 'm':
                 mentions()
         except TypeError:

@@ -2,6 +2,7 @@ import sys
 sys.path.append('./python-tent-client')
 import tentapp
 import lib.libconfig as config
+import lib.liblogin as login
 
 def unfollow(entity,lastid=""):
     """unfollow entity
