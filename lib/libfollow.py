@@ -3,6 +3,7 @@ sys.path.append('./python-tent-client')
 import tentapp
 import lib.libconfig as config
 import lib.liblogin as login
+import lib.libfunc as libfunc
 
 def unfollow(entity,lastid=""):
     """unfollow entity
@@ -38,10 +39,9 @@ def follow(entity):
     """follow entity"""
     conf=config.config()
     app = login.login()
-    try:
-        app.follow(str(entity))
+    f=app.follow(str(entity))
+    if f:
         return True
-    except Exception, e:
-        debug('error following: %s' % (entity))
-        debug(e)
-        return False
+    else:
+        retstring = "Could not follow %s" % (entity,e)
+        return retstring

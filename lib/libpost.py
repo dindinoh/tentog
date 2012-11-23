@@ -11,9 +11,13 @@ class getrepost(object):
         orgid = ""
         orgposter = ""
     def getrepost(self):
-        app = tentapp.TentApp(self.orgposter)
-        post = app.getPosts(id=self.orgid)
-        repost = "=> " + self.orgposter + ": " + post['content']['text']
+        try:
+            app = tentapp.TentApp(self.orgposter)
+            post = app.getPosts(id=self.orgid)
+        except:
+            post={'content':{'text':'could not fetch %s'%(self.orgid)}}
+
+        repost = "Repost => " + self.orgposter + ": " + post['content']['text']
         return repost
 
 def sendpost(message):

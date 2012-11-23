@@ -101,7 +101,9 @@ class CustomEdit(urwid.Edit):
             if "/f " in self.get_edit_text() or "/follow " in self.get_edit_text():
                 whotofollow = str(self.get_edit_text()).split(' ')[1]
                 if whotofollow:
-                    libfollow.follow(whotofollow)
+                    f = libfollow.follow(whotofollow)
+                    if not f == True:
+                        sysmsg(f)
                     gtentog()
             if "/u " in self.get_edit_text() or "/unfollow " in self.get_edit_text():
                 whotounfollow = str(self.get_edit_text()).split(' ')[1]
@@ -119,17 +121,7 @@ class CustomEdit(urwid.Edit):
         urwid.Edit.keypress(self, size, key)
 
 def sysmsg(msg):
-    towrite='{"attachments": [],\
-"app": {"url": "tentog", "name": "Tentog sysmsg"},\
-"updated_at": 0,\
-"entity": "http://Tentog.",\
-"content": {"text": "%s"},\
-"received_at": 0,\
-"published_at": 0,\
-"version": 1,\
-"licenses": [],\
-"mentions": [],\
-"type": "https://tent.io/types/post/status/v0.1.0","id": "","permissions": {"entities": {}, "public": true, "groups": []}}' % msg
+    towrite='{"attachments": [],"app": {"url": "tentog", "name": "Tentog sysmsg"},"updated_at": 0,"entity": "http://Tentog.","content": {"text": "%s"},"received_at": 0,"published_at": 0,"version": 1,"licenses": [],"mentions": [],"type": "https://tent.io/types/post/status/v0.1.0","id":"","permissions": {"entities": {}, "public": true, "groups": []}}' % msg
     conf=libconfig.config()
     file = open(conf.datastore+'status', 'a')
     file.write(towrite + "\n")
@@ -137,7 +129,7 @@ def sysmsg(msg):
     gtentog()
 
 class gtentog(object):
-    """start the gui and fetch posts from datastore"""
+    """start the gui and fetch posts from datastore, refactor"""
     def __init__(self):
         palette = [
             ('head','light cyan', 'black'),
@@ -166,6 +158,18 @@ class gtentog(object):
                 entity = "Tentog>"
                 msg = "You are now followed by %s" % (line['content']['entity'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity))
+            elif line['type'] == 'https://tent.io/types/post/essay/v0.1.0':
+                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
+                entity = str(line['entity']).split('//')[1].split('.')[0] + ">"
+                msg = 'Essay => %s' % (line['content']['body'][0:300])
+                postid = line['id']
+                entityUrl = line['entity']
+                items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
+            elif line['type'] == 'http://www.beberlei.de/tent/bookmark/v0.0.1':
+                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
+                entity = str(line['entity']).split('//')[1].split('.')[0] + ">"
+                msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'],line['content']['description'])
+                items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
 
         walker = urwid.SimpleListWalker(items)
         self.listbox = urwid.ListBox(walker)
