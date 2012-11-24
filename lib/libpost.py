@@ -6,6 +6,13 @@ import lib.libconfig as libconfig
 import lib.liblogin as liblogin
 import lib.libfunc as libfunc
 
+class mentions(object):
+    def __init__(self):
+        conf = libconfig.config()
+        posts = app.getPosts(mentioned_entity=conf.entityUrl())
+        posts.sort(key = lambda p: p['published_at'])
+        return posts
+
 class getrepost(object):
     def __init__(self):
         orgid = ""

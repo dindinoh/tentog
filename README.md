@@ -3,16 +3,7 @@ Tentog
 
 Description
 ======
-irssilike cli client for tent.io written in Python.
-
-Nothing more than a urwid window and a fetcher in the background to get your new posts.
-It's almost 100% usable for me right now as my only tent client.
-
-A lot of stuff is not working right now, but this is what _is_ working:
-* posting
-* follow someone
-* read posts
-* read reposts
+irssilike cli client for tent.io written in Python, so if you want a gui-free way of using tent this one works. 
 
 Dependencies
 ======
@@ -48,9 +39,9 @@ It should fix your keys as kestore.js if you haven't set them up using longears 
 
 Keys in status window:
 * u      : update status window
-* e      : enter edit line
+* TAB      : enter edit line
 
 In edit mode
 * /follow https://tent.tent.is  : follow specified entity
-* esc    : stop editing
+* TAB    : stop editing
 * <enter> post what you have written in edit line

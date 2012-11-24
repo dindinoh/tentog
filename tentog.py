@@ -113,7 +113,7 @@ class CustomEdit(urwid.Edit):
                 libpost.sendpost(self.get_edit_text())
                 gtentog()
                 return
-        elif key == 'esc':
+        elif key == 'tab':
             urwid.emit_signal(self, 'done', None)
             gtentog()
             return
@@ -130,17 +130,22 @@ def sysmsg(msg):
 
 class gtentog(object):
     """start the gui and fetch posts from datastore, refactor"""
+    function = ""
     def __init__(self):
         palette = [
             ('head','light cyan', 'black'),
             ('body','', '', 'standout'),
             ('entity','light cyan', '', 'standout'),
             ('foot','', 'black'),
-            ('focus','', 'light cyan', 'standout'),
+            ('focus','light cyan', '', 'standout'),
             ]
-
+        conf=libconfig.config()
+        if self.function=="mentions":
+            posts = libpost.mentions()
+        else:
+            posts = libfunc.getstatusfromfile()
         items = []
-        for line in libfunc.getstatusfromfile():
+        for line in posts:
             if line['type'] == 'https://tent.io/types/post/status/v0.1.0' or line['type']=='https://tent.io/types/post/repost/v0.1.0':
                 timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = str(line['entity']).split('//')[1].split('.')[0] + ">"
@@ -176,7 +181,9 @@ class gtentog(object):
         focus = self.listbox.set_focus(+100)
         self.view = urwid.Frame(urwid.AttrWrap(self.listbox, 'body'))
         self.foot = CustomEdit(' > ')
-        self.view.set_footer(self.foot)        
+        self.view.set_footer(self.foot)
+        # set head
+        self.view.set_header(urwid.Text('%s : feed' % (conf.entityUrl)))
         #self.watch_pipe()
         loop = urwid.MainLoop(self.view, palette, unhandled_input=self.keystroke)
         urwid.connect_signal(walker, 'modified', self.update)
@@ -201,12 +208,11 @@ class gtentog(object):
                 self.edit()
             if input is 'u':
                 gtentog()
-            if input is 'p':
-                sysmsg("p is pressed")    
-            if input == 'e':
+            if input == 'tab':
                 self.edit()
             if input == 'm':
-                mentions()
+                self.function = "mentions"
+                gtentog(self)
         except TypeError:
             pass
     
