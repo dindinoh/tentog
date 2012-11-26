@@ -159,12 +159,12 @@ class gtentog(object):
                 postid = line['id']
                 entityUrl = line['entity']
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
-            elif line['type'] == 'https://tent.io/types/post/following/v0.1.0':
+            elif line['type'] == 'https://tent.io/types/post/following/v0.1.0' and line['entity'] == conf.entityUrl:
                 timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = "<@Tentog>"
                 msg = "You are now following %s" % (line['content']['entity'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity))
-            elif line['type'] == 'https://tent.io/types/post/follower/v0.1.0':
+            elif line['type'] == 'https://tent.io/types/post/follower/v0.1.0' and line['entity'] == conf.entityUrl:
                 timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = "<@Tentog>"
                 msg = "You are now followed by %s" % (line['content']['entity'])
