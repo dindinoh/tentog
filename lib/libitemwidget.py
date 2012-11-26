@@ -11,7 +11,7 @@ class ItemWidget (urwid.WidgetWrap):
             
             
             ('fixed', 6, urwid.Padding ( urwid.AttrWrap ( urwid.Text ('%s' % time) , 'body', 'focus'), right=1)),
-            ('fixed', 16,urwid.Padding ( urwid.AttrWrap ( urwid.Text ('%s' % entity) , 'entity', 'focus'), right=1)),
+            ('fixed', 12,urwid.Padding ( urwid.AttrWrap ( urwid.Text ('%s' % entity) , 'entity', 'focus'), align='right',right=1)),
             (urwid.Padding(urwid.AttrWrap(urwid.Text('%s' % postdata), 'body', 'focus'),align='left')),
 
         ]
