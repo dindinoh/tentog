@@ -178,7 +178,7 @@ class gtentog(object):
                 else:
                     entity = "<"+entity
                 entity = entity + ">"
-                msg = 'Essay => %s' % (line['content']['body'][0:300])
+                msg = 'Essay => %s[...]' % (line['content']['body'][0:300])
                 postid = line['id']
                 entityUrl = line['entity']
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
@@ -191,7 +191,10 @@ class gtentog(object):
                 else:
                     entity = "<"+entity
                 entity = entity + ">"
-                msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'],line['content']['description'])
+                try:
+                    msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'],line['content']['description'])
+                except:
+                    msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
 
         walker = urwid.SimpleListWalker(items)
