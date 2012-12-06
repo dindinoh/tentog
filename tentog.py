@@ -146,56 +146,36 @@ class gtentog(object):
             posts = libfunc.getstatusfromfile()
         items = []
         for line in posts:
+            postid = line['id']
+            timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
+            entity = str(line['entity']).split('//')[1].split('.')[0]
+            entity = entity[0:9]
+            if conf.entity in entity:
+                entity = "<@"+entity
+            else:
+                entity = "<"+entity+">"
             if line['type'] == 'https://tent.io/types/post/status/v0.1.0' or line['type']=='https://tent.io/types/post/repost/v0.1.0':
-                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
-                entity = str(line['entity']).split('//')[1].split('.')[0]
-                entity = entity[0:9]
-                if "dindinoh" in entity:
-                    entity = "<@"+entity
-                else:
-                    entity = "<"+entity
-                entity = entity + ">"
                 msg = '%s' % (line['content']['text'])
-                postid = line['id']
                 entityUrl = line['entity']
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
             elif line['type'] == 'https://tent.io/types/post/following/v0.1.0' and line['entity'] == conf.entityUrl:
-                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = "<@Tentog>"
                 msg = "You are now following %s" % (line['content']['entity'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity))
             elif line['type'] == 'https://tent.io/types/post/follower/v0.1.0' and line['entity'] == conf.entityUrl:
-                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
                 entity = "<@Tentog>"
                 msg = "You are now followed by %s" % (line['content']['entity'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity))
             elif line['type'] == 'https://tent.io/types/post/essay/v0.1.0':
-                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
-                entity = str(line['entity']).split('//')[1].split('.')[0]
-                entity = entity[0:9]
-                if "dindinoh" in entity:
-                    entity = "<@"+entity
-                else:
-                    entity = "<"+entity
-                entity = entity + ">"
                 msg = 'Essay => %s[...]' % (line['content']['body'][0:300])
-                postid = line['id']
                 entityUrl = line['entity']
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
             elif line['type'] == 'http://www.beberlei.de/tent/bookmark/v0.0.1':
-                timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
-                entity = str(line['entity']).split('//')[1].split('.')[0]
-                entity = entity[0:9]
-                if "dindinoh" in entity:
-                    entity = "<@"+entity
-                else:
-                    entity = "<"+entity
-                entity = entity + ">"
                 try:
                     msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'],line['content']['description'])
                 except:
                     msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'])
-                items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
+                items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid))
 
         walker = urwid.SimpleListWalker(items)
         self.listbox = urwid.ListBox(walker)

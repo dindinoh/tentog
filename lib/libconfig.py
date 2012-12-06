@@ -45,6 +45,8 @@ class config(object):
             # check required options in config file
             if parser.has_option('tentog','entityUrl'):
                 self.entityUrl=parser.get('tentog', 'entityUrl')
+                self.entity = str(self.entityUrl).split('//')[1].split('.')[0]
+                self.entity = self.entity[0:9]
             else:
                 self.missingreq('entityUrl')
             if parser.has_option('tentog','keystore'):
