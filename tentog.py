@@ -98,6 +98,9 @@ class CustomEdit(urwid.Edit):
         """take care of keypress and dispatch actions"""
         if key == 'enter':
             urwid.emit_signal(self, 'done', self.get_edit_text())
+
+            libfunc.debug('replytest: %s'%self.get_edit_text() )
+            
             if "/f " in self.get_edit_text() or "/follow " in self.get_edit_text():
                 whotofollow = str(self.get_edit_text()).split(' ')[1]
                 if whotofollow:
@@ -105,14 +108,21 @@ class CustomEdit(urwid.Edit):
                     if not f == True:
                         sysmsg(f)
                     gtentog()
+            
             if "/u " in self.get_edit_text() or "/unfollow " in self.get_edit_text():
                 whotounfollow = str(self.get_edit_text()).split(' ')[1]
                 if whotounfollow:
                     libfollow.unfollow(whotounfollow)
+            
+            if "/r " in self.get_edit_text() or "/reply " in self.get_edit_text():
+                libfunc.debug('hehe')
+                return
+
             if "/" not in str(self.get_edit_text())[0]:
                 libpost.sendpost(self.get_edit_text())
                 gtentog()
                 return
+
         elif key == 'tab':
             urwid.emit_signal(self, 'done', None)
             gtentog()
@@ -184,7 +194,8 @@ class gtentog(object):
         self.foot = CustomEdit(' > ')
         self.view.set_footer(self.foot)
         # set head
-        self.view.set_header(urwid.Text('%s : feed' % (conf.entityUrl)))
+        self.view.set_header(urwid.AttrWrap(urwid.Text('%s' % (conf.entityUrl) ),'head'))
+
         #self.watch_pipe()
         loop = urwid.MainLoop(self.view, palette, unhandled_input=self.keystroke)
         urwid.connect_signal(walker, 'modified', self.update)
@@ -196,17 +207,27 @@ class gtentog(object):
         #self.view.set_header(urwid.AttrWrap(urwid.Text('selected: %s' % str(focus)), 'head'))
 
     def keystroke (self, input):
+        conf=libconfig.config()
         """read keystroke in when in status window"""
         try:
             if input in ('q'):
                 quit("Tentog quit.",0)
-            #if input is 'enter':
-            #    focus = listbox.get_focus()[0].content
-            #    view.set_header(urwid.AttrWrap(urwid.Text('tentog : should show verbose from %s' % str(focus)), 'head'))
+            if input is 'right':
+                focus = self.listbox.get_focus()[0].entityUrl
+                self.view.set_header(urwid.AttrWrap(urwid.Text('%s | poster: %s' % (conf.entityUrl,str(focus))), 'head'))
+            if input is 'left':
+                focus = self.listbox.get_focus()[0].entityUrl
+                self.view.set_header(urwid.AttrWrap(urwid.Text('%s' % (conf.entityUrl,)), 'head'))
             if input is 'r':
-                self.foot = CustomEdit(' > /reply %s %s: '%(self.listbox.get_focus()[0].postid,self.listbox.get_focus()[0].entityUrl))
+                
+                reply = libpost.postreply()
+                reply.postid = self.listbox.get_focus()[0].postid
+                reply.entity = self.listbox.get_focus()[0].entityUrl
+                libfunc.debug('here')
+                self.foot = CustomEdit(' > /reply %s: '%(self.listbox.get_focus()[0].entityUrl))
+                self.foot.reply = reply
                 self.view.set_footer(self.foot)
-                self.edit()
+                self.edit(reply)
             if input is 'u':
                 gtentog()
             if input == 'tab':
@@ -217,7 +238,7 @@ class gtentog(object):
         except TypeError:
             pass
     
-    def edit(self):
+    def edit(self,rep=""):
         self.view.set_focus('footer')
         urwid.connect_signal(self.foot, 'done', self.edit_done)
 

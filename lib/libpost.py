@@ -6,6 +6,9 @@ import lib.libconfig as libconfig
 import lib.liblogin as liblogin
 import lib.libfunc as libfunc
 
+class postreply(object):
+    pass
+
 class mentions(object):
     def __init__(self):
         conf = libconfig.config()
@@ -32,7 +35,7 @@ def sendpost(message):
     conf = libconfig.config()
     app = liblogin.login()
     post = {
-        # add essay if > 256char
+        # add split message if > 256 char
         'type': 'https://tent.io/types/post/status/v0.1.0',
         'published_at': int(time.time()),
         'permissions': {
