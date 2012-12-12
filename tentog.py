@@ -34,6 +34,7 @@ class fetcher(threading.Thread):
     def run(self):
         super(fetcher, self).__init__()
         self._stop = threading.Event()
+
         knowntypes = [
             'https://tent.io/types/post/status/v0.1.0',
             'https://tent.io/types/post/following/v0.1.0',
@@ -98,9 +99,13 @@ class CustomEdit(urwid.Edit):
         """take care of keypress and dispatch actions"""
         if key == 'enter':
             urwid.emit_signal(self, 'done', self.get_edit_text())
-
-            libfunc.debug('replytest: %s'%self.get_edit_text() )
             
+            try:
+                if self.reply:
+                    libfunc.debug('Here post reply to self.reply.postid: %s'%(self.reply.postid))
+            except AttributeError:
+                pass
+
             if "/f " in self.get_edit_text() or "/follow " in self.get_edit_text():
                 whotofollow = str(self.get_edit_text()).split(' ')[1]
                 if whotofollow:
@@ -114,14 +119,12 @@ class CustomEdit(urwid.Edit):
                 if whotounfollow:
                     libfollow.unfollow(whotounfollow)
             
-            if "/r " in self.get_edit_text() or "/reply " in self.get_edit_text():
-                libfunc.debug('hehe')
-                return
-
-            if "/" not in str(self.get_edit_text())[0]:
+            if not self.get_edit_text() or "/" not in str(self.get_edit_text())[0]:
                 libpost.sendpost(self.get_edit_text())
                 gtentog()
-                return
+
+            else:
+                gtentog()
 
         elif key == 'tab':
             urwid.emit_signal(self, 'done', None)
@@ -161,12 +164,20 @@ class gtentog(object):
             entity = str(line['entity']).split('//')[1].split('.')[0]
             entity = entity[0:9]
             if conf.entity in entity:
-                entity = "<@"+entity
+                entity = "<@"+entity+">"
             else:
                 entity = "<"+entity+">"
             if line['type'] == 'https://tent.io/types/post/status/v0.1.0' or line['type']=='https://tent.io/types/post/repost/v0.1.0':
                 msg = '%s' % (line['content']['text'])
                 entityUrl = line['entity']
+                try:
+                    if line['content']['location']:
+                        l=str(line['content']['location']['coordinates'][0])
+                        ll=str(line['content']['location']['coordinates'][1])
+                        s = 'http://maps.google.com/maps?q='+l+','+ll+'+%28'+entity[1:-1]+'%29&z=14&ll='+l+','+ll
+                        msg = msg + "\nLocation => %s" % (s)
+                except Exception, e:
+                    libfunc.debug('exception: %s '%(str(e)))
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
             elif line['type'] == 'https://tent.io/types/post/following/v0.1.0' and line['entity'] == conf.entityUrl:
                 entity = "<@Tentog>"
@@ -184,7 +195,7 @@ class gtentog(object):
                 try:
                     msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'],line['content']['description'])
                 except:
-                    msg = 'Bookmark => %s \n %s \n %s' % (line['content']['url'],line['content']['title'])
+                    msg = 'Bookmark => %s \n %s' % (line['content']['url'],line['content']['title'])
                 items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid))
 
         walker = urwid.SimpleListWalker(items)
@@ -193,10 +204,7 @@ class gtentog(object):
         self.view = urwid.Frame(urwid.AttrWrap(self.listbox, 'body'))
         self.foot = CustomEdit(' > ')
         self.view.set_footer(self.foot)
-        # set head
         self.view.set_header(urwid.AttrWrap(urwid.Text('%s' % (conf.entityUrl) ),'head'))
-
-        #self.watch_pipe()
         loop = urwid.MainLoop(self.view, palette, unhandled_input=self.keystroke)
         urwid.connect_signal(walker, 'modified', self.update)
         loop.run()
@@ -219,15 +227,13 @@ class gtentog(object):
                 focus = self.listbox.get_focus()[0].entityUrl
                 self.view.set_header(urwid.AttrWrap(urwid.Text('%s' % (conf.entityUrl,)), 'head'))
             if input is 'r':
-                
                 reply = libpost.postreply()
                 reply.postid = self.listbox.get_focus()[0].postid
                 reply.entity = self.listbox.get_focus()[0].entityUrl
-                libfunc.debug('here')
                 self.foot = CustomEdit(' > /reply %s: '%(self.listbox.get_focus()[0].entityUrl))
                 self.foot.reply = reply
                 self.view.set_footer(self.foot)
-                self.edit(reply)
+                self.edit()
             if input is 'u':
                 gtentog()
             if input == 'tab':
@@ -238,7 +244,7 @@ class gtentog(object):
         except TypeError:
             pass
     
-    def edit(self,rep=""):
+    def edit(self):
         self.view.set_focus('footer')
         urwid.connect_signal(self.foot, 'done', self.edit_done)
 

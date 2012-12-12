@@ -39,8 +39,10 @@ It should fix your keys as kestore.js if you haven't set them up using longears 
 
 Keys in status window:
 * u      : update status window
-* TAB      : enter edit line
-
+* TAB    : enter edit line
+* right  : see more information in head bar about chosen post
+* left	 : clean top bar from what right bar put there
+ 
 In edit mode
 * /follow https://tent.tent.is  : follow specified entity
 * TAB    : stop editing
