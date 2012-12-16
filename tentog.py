@@ -80,7 +80,7 @@ class fetcher(threading.Thread):
                 else:
                     libfunc.debug ("Found strange post type: %s"  % ( post['type'] ))
             while not self.stopped():
-                time.sleep(60)
+                time.sleep(20)
                 fetcher().start()
                 return 1
 
@@ -99,13 +99,13 @@ class CustomEdit(urwid.Edit):
         """take care of keypress and dispatch actions"""
         if key == 'enter':
             urwid.emit_signal(self, 'done', self.get_edit_text())
-            
             try:
                 if self.reply:
-                    libfunc.debug('Here post reply to self.reply.postid: %s'%(self.reply.postid))
-            except AttributeError:
+                    self.reply.message=self.get_edit_text()
+                    self.reply.sendreply()
+                    gtentog()
+            except AttributeError, e:
                 pass
-
             if "/f " in self.get_edit_text() or "/follow " in self.get_edit_text():
                 whotofollow = str(self.get_edit_text()).split(' ')[1]
                 if whotofollow:
@@ -161,6 +161,7 @@ class gtentog(object):
         for line in posts:
             postid = line['id']
             timestamp = time.strftime("%H:%M", time.localtime(line['published_at']))
+            realtime = time.strftime("%Y-%m-%d %H:%M", time.localtime(line['published_at']))
             entity = str(line['entity']).split('//')[1].split('.')[0]
             entity = entity[0:9]
             if conf.entity in entity:
@@ -177,8 +178,16 @@ class gtentog(object):
                         s = 'http://maps.google.com/maps?q='+l+','+ll+'+%28'+entity[1:-1]+'%29&z=14&ll='+l+','+ll
                         msg = msg + "\nLocation => %s" % (s)
                 except Exception, e:
-                    libfunc.debug('exception: %s '%(str(e)))
-                items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl))
+                    pass
+                try:
+                    if line['mentions'][0]['post']:
+                        mentions = ""
+                        inreplyto=line['mentions'][0]['post']
+                    for m in line['mentions']:
+                        mentions = mentions + m['entity'] + " "
+                    items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl,realtime,inreplyto,mentions))
+                except:
+                    items.append(libitemwidget.ItemWidget(timestamp,msg,entity,postid,entityUrl,realtime))
             elif line['type'] == 'https://tent.io/types/post/following/v0.1.0' and line['entity'] == conf.entityUrl:
                 entity = "<@Tentog>"
                 msg = "You are now following %s" % (line['content']['entity'])
@@ -211,7 +220,7 @@ class gtentog(object):
     
     def update(self):
         """repaint status window"""
-        focus = self.listbox.get_focus()[0].postid
+        #focus = self.listbox.get_focus()[0].postid
         #self.view.set_header(urwid.AttrWrap(urwid.Text('selected: %s' % str(focus)), 'head'))
 
     def keystroke (self, input):
@@ -221,16 +230,19 @@ class gtentog(object):
             if input in ('q'):
                 quit("Tentog quit.",0)
             if input is 'right':
-                focus = self.listbox.get_focus()[0].entityUrl
-                self.view.set_header(urwid.AttrWrap(urwid.Text('%s | poster: %s' % (conf.entityUrl,str(focus))), 'head'))
+                entityUrl = self.listbox.get_focus()[0].entityUrl
+                realtime = self.listbox.get_focus()[0].realtime
+                mentions = self.listbox.get_focus()[0].mentions
+                inreplyto = self.listbox.get_focus()[0].inreplyto
+                self.view.set_header(urwid.AttrWrap(urwid.Text('%s | by %s at %s in reply to %s mentioning %s' % (conf.entityUrl,str(entityUrl),str(realtime),str(mentions),str(inreplyto))), 'head'))
             if input is 'left':
                 focus = self.listbox.get_focus()[0].entityUrl
                 self.view.set_header(urwid.AttrWrap(urwid.Text('%s' % (conf.entityUrl,)), 'head'))
             if input is 'r':
                 reply = libpost.postreply()
                 reply.postid = self.listbox.get_focus()[0].postid
-                reply.entity = self.listbox.get_focus()[0].entityUrl
-                self.foot = CustomEdit(' > /reply %s: '%(self.listbox.get_focus()[0].entityUrl))
+                reply.postentity = self.listbox.get_focus()[0].entityUrl
+                self.foot = CustomEdit(' reply to %s > '%(reply.postentity))
                 self.foot.reply = reply
                 self.view.set_footer(self.foot)
                 self.edit()
