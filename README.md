@@ -4,6 +4,7 @@ Tentog
 Description
 ======
 irssilike cli client for tent.io written in Python, so if you want a gui-free way of using tent this one works. 
+screenshot: https://raw.github.com/dindinoh/tentog/master/tentog.png
 
 Dependencies
 ======
